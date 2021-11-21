@@ -29,6 +29,8 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
           CharacterComicFetchError(
             oldComics: state.oldComics,
             exception: exception,
+            characterComicsLimit:
+                getCharacterComicsUseCase.characterComicsLimit,
           ),
         );
       }, (newCharacterComicList) {
@@ -37,11 +39,17 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
             CharacterComicFetched(
               oldComics: [...state.oldComics, ...state.newComics],
               newComics: newCharacterComicList,
+              characterComicsLimit:
+                  getCharacterComicsUseCase.characterComicsLimit,
             ),
           );
         } else {
           emit(
-            CharacterComicEnded(oldComics: state.oldComics),
+            CharacterComicEnded(
+              oldComics: state.oldComics,
+              characterComicsLimit:
+                  getCharacterComicsUseCase.characterComicsLimit,
+            ),
           );
         }
       });

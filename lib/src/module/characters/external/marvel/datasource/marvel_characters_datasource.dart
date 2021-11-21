@@ -21,7 +21,9 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
     required this.privateApiKey,
     int charactersLimit = 20,
     int characterComicsLimit = 20,
-  })  : _charactersLimit = charactersLimit,
+  })  : assert(charactersLimit >= 1 && charactersLimit <= 100),
+        assert(characterComicsLimit >= 1 && characterComicsLimit <= 100),
+        _charactersLimit = charactersLimit,
         _characterComicsLimit = characterComicsLimit;
 
   @override
@@ -52,6 +54,7 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
         "apikey": publicApiKey,
         "hash": hash,
         "offset": offset,
+        "limit": characterComicsLimit,
       });
 
       Map<String, dynamic> jsonData = response.data["data"];
@@ -87,6 +90,7 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
         "apikey": publicApiKey,
         "hash": hash,
         "offset": offset,
+        "limit": charactersLimit,
       });
 
       Map<String, dynamic> jsonData = response.data["data"];

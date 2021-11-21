@@ -21,6 +21,7 @@ class CharacterCubit extends Cubit<CharacterState> {
         emit(
           CharacterFetchError(
             oldCharacters: state.oldCharacters,
+            charactersLimit: getCharactersUseCase.charactersLimit,
             exception: exception,
           ),
         );
@@ -29,12 +30,16 @@ class CharacterCubit extends Cubit<CharacterState> {
           emit(
             CharacterFetched(
               oldCharacters: [...state.oldCharacters, ...state.newCharacters],
+              charactersLimit: getCharactersUseCase.charactersLimit,
               newCharacters: newCharacterList,
             ),
           );
         } else {
           emit(
-            CharacterEnded(oldCharacters: state.oldCharacters),
+            CharacterEnded(
+              oldCharacters: state.oldCharacters,
+              charactersLimit: getCharactersUseCase.charactersLimit,
+            ),
           );
         }
       });

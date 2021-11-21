@@ -13,7 +13,6 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  static const _pageSize = 20;
   final CharacterCubit _characterCubit;
   final PagingController<int, Character> _pagingController;
   bool flag = false;
@@ -72,7 +71,8 @@ class _ListScreenState extends State<ListScreen> {
       final oldCharacters = _characterCubit.state.oldCharacters;
       final newCharacters = _characterCubit.state.newCharacters;
 
-      final isLastPage = newCharacters.length < _pageSize;
+      final isLastPage =
+          newCharacters.length < _characterCubit.state.charactersLimit;
 
       if (isLastPage) {
         _pagingController.appendLastPage(newCharacters);
