@@ -13,20 +13,20 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final CharacterCubit _characterCubit;
-  final PagingController<int, Character> _pagingController;
-
-  _ListScreenState()
-      : _characterCubit = CharacterCubit(
-          GetCharacters(
-            KiwiContainer().resolve<ICharacterRepository>(),
-          ),
-        ),
-        _pagingController = PagingController(firstPageKey: 0);
+  late final CharacterCubit _characterCubit;
+  late final PagingController<int, Character> _pagingController;
 
   @override
   void initState() {
     super.initState();
+
+    _characterCubit = CharacterCubit(
+      GetCharacters(
+        KiwiContainer().resolve<ICharacterRepository>(),
+      ),
+    );
+
+    _pagingController = PagingController(firstPageKey: 0);
 
     _pagingController.addPageRequestListener((pageKey) {
       _characterCubit.fetchCharacters();
@@ -59,8 +59,18 @@ class _ListScreenState extends State<ListScreen> {
             child: PagedGridView<int, Character>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<Character>(
-                itemBuilder: (context, character, index) =>
-                    CharacterTile(character: character),
+                itemBuilder: (context, character, index) => CharacterTile(
+                  character: character,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetailsScreen(character: character),
+                      ),
+                    );
+                  },
+                ),
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

@@ -1,16 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:character_info/src/module/characters/domain/domain.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
-class CharacterTile extends StatelessWidget {
-  final Character character;
+class ComicTile extends StatelessWidget {
+  final Comic comic;
   final void Function()? onTap;
 
-  const CharacterTile({
+  const ComicTile({
     Key? key,
-    required this.character,
+    required this.comic,
     this.onTap,
   }) : super(key: key);
 
@@ -26,15 +24,15 @@ class CharacterTile extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (character.imageUrl != null)
+              if (comic.imageUrl != null)
                 Flexible(
                   child: CachedNetworkImage(
-                    imageUrl: character.imageUrl!,
+                    imageUrl: comic.imageUrl!,
                   ),
                 ),
-              if (character.name != null)
+              if (comic.title != null)
                 Text(
-                  character.name!,
+                  comic.title!,
                   textAlign: TextAlign.center,
                 ),
             ],
