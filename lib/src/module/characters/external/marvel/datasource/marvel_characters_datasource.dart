@@ -7,25 +7,38 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
 class MarvelCharactersDatasource implements ICharacterDatasource {
-  static final Dio _dio = Dio();
   static const Utf8Encoder _utf8encoder = Utf8Encoder();
   static const String imgSize = "portrait_xlarge";
+  static final Dio _dio = Dio();
+
+  final int _charactersLimit;
+  final int _characterComicsLimit;
   final String publicApiKey;
   final String privateApiKey;
 
   MarvelCharactersDatasource({
     required this.publicApiKey,
     required this.privateApiKey,
-  });
+    int charactersLimit = 20,
+    int characterComicsLimit = 20,
+  })  : _charactersLimit = charactersLimit,
+        _characterComicsLimit = characterComicsLimit;
+
+  @override
+  int get charactersLimit => _charactersLimit;
+
+  @override
+  int get characterComicsLimit => _characterComicsLimit;
 
   String get _charactersBaseUrl =>
-      "https://gateway.marvel.com:443/v1/public/characters";
+      "http://gateway.marvel.com/v1/public/characters";
 
   String _comicsBaseUrl(int id) => "$_charactersBaseUrl/$id/comics";
 
   @override
-  Future<Either<WithoutDataException, MarvelComicListAdapter>>
-      getCharacterComics(int id, [int? offset]) async {
+  Future<Either<FetchDataException, MarvelComicListAdapter>> getCharacterComics(
+      int id,
+      [int? offset]) async {
     int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
 
     List<int> byteList =
@@ -35,9 +48,10 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
       String hash = md5.convert(byteList).toString();
 
       Response response = await _dio.get(_comicsBaseUrl(id), queryParameters: {
-        "apiKey": publicApiKey,
-        "hash": hash,
         "ts": currentTimestamp,
+        "apikey": publicApiKey,
+        "hash": hash,
+        "offset": offset,
       });
 
       Map<String, dynamic> jsonData = response.data["data"];
@@ -47,7 +61,7 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
       );
     } on DioError catch (e) {
       return Left(
-        WithoutDataException(
+        FetchDataException(
           message: e.message,
           statusCode: e.response?.statusCode,
           stackTrace: e.stackTrace.toString(),
@@ -57,8 +71,7 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
   }
 
   @override
-  Future<Either<WithoutDataException, MarvelCharacterListAdapter>>
-      getCharacters([
+  Future<Either<FetchDataException, MarvelCharacterListAdapter>> getCharacters([
     int? offset,
   ]) async {
     int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
@@ -70,9 +83,10 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
       String hash = md5.convert(byteList).toString();
 
       Response response = await _dio.get(_charactersBaseUrl, queryParameters: {
-        "apiKey": publicApiKey,
-        "hash": hash,
         "ts": currentTimestamp,
+        "apikey": publicApiKey,
+        "hash": hash,
+        "offset": offset,
       });
 
       Map<String, dynamic> jsonData = response.data["data"];
@@ -82,7 +96,7 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
       );
     } on DioError catch (e) {
       return Left(
-        WithoutDataException(
+        FetchDataException(
           message: e.message,
           statusCode: e.response?.statusCode,
           stackTrace: e.stackTrace.toString(),

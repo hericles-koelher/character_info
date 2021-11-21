@@ -8,6 +8,12 @@ class CharacterRepository implements ICharacterRepository {
   CharacterRepository(this.datasource);
 
   @override
+  int get characterComicsLimit => datasource.characterComicsLimit;
+
+  @override
+  int get charactersLimit => datasource.charactersLimit;
+
+  @override
   Future<Either<BaseException, List<Comic>>> getCharacterComics(int id,
       [int? offset]) async {
     Either<BaseException, IComicListAdapter> result =
@@ -16,7 +22,7 @@ class CharacterRepository implements ICharacterRepository {
     // Caso não retorne nenhuma revista...
     if (result.exists((r) => r.comics == null)) {
       return Left(
-        WithoutDataException(
+        FetchDataException(
           statusCode: 200,
           message: "Não há mais revistas para buscar!",
         ),
@@ -37,7 +43,7 @@ class CharacterRepository implements ICharacterRepository {
     // Caso retorne nenhum personagem...
     if (result.exists((r) => r.characters == null)) {
       return Left(
-        WithoutDataException(
+        FetchDataException(
           statusCode: 200,
           message: "Não há mais personagens para buscar!",
         ),

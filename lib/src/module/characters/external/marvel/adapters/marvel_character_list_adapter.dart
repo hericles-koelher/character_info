@@ -1,5 +1,5 @@
-import 'package:character_info/src/module/characters/domain/models/character.dart';
-import 'package:character_info/src/module/characters/infra/adapters/character_list_adapter.dart';
+import 'package:character_info/src/module/characters/domain/domain.dart';
+import 'package:character_info/src/module/characters/infra/infra.dart';
 
 class MarvelCharacterListAdapter implements ICharacterListAdapter {
   @override
@@ -8,7 +8,7 @@ class MarvelCharacterListAdapter implements ICharacterListAdapter {
   MarvelCharacterListAdapter._([this.characters]);
 
   factory MarvelCharacterListAdapter.fromJson(Map<String, dynamic> json) {
-    int count = int.parse(json["count"]);
+    int count = json["count"];
 
     if (count == 0) {
       return MarvelCharacterListAdapter._();
@@ -18,14 +18,25 @@ class MarvelCharacterListAdapter implements ICharacterListAdapter {
         (index) {
           Map<String, dynamic> characterJsonData = json["results"][index];
 
-          int id = int.parse(characterJsonData["id"]);
-          String name = characterJsonData["name"];
-          String description = characterJsonData["description"];
-          String imageUrl =
-              "${characterJsonData["thumbnail"]["path"]}/portrait_xlarge.${characterJsonData["thumbnail"]["extension"]}";
+          int? id = characterJsonData.containsKey("id")
+              ? characterJsonData["id"]
+              : null;
 
-          int numberOfComics =
-              int.parse(characterJsonData["comics"]["available"]);
+          String? name = characterJsonData.containsKey("name")
+              ? characterJsonData["name"]
+              : null;
+
+          String? description = characterJsonData.containsKey("description")
+              ? characterJsonData["description"]
+              : null;
+
+          String? imageUrl = characterJsonData.containsKey("thumbnail")
+              ? "${characterJsonData["thumbnail"]["path"]}/portrait_xlarge.${characterJsonData["thumbnail"]["extension"]}"
+              : null;
+
+          int? numberOfComics = characterJsonData.containsKey("comics")
+              ? characterJsonData["comics"]["available"]
+              : null;
 
           return Character(
             id: id,

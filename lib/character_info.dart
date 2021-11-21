@@ -1,10 +1,11 @@
+import 'package:character_info/src/constants.dart';
 import 'package:character_info/src/module/characters/domain/domain.dart';
 import 'package:character_info/src/module/characters/external/external.dart';
 import 'package:character_info/src/module/characters/infra/infra.dart';
 import 'package:character_info/src/module/characters/presenter/presenter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 class CharacterInfo extends StatefulWidget {
   const CharacterInfo({Key? key}) : super(key: key);
@@ -19,17 +20,14 @@ class _CharacterInfoState extends State<CharacterInfo> {
   _CharacterInfoState() : _kiwiContainer = KiwiContainer();
 
   @override
-  Future<void> initState() async {
-    String publicApiKey = await rootBundle.loadString("publicApiKey");
-    String privateApiKey = await rootBundle.loadString("privateApiKey");
-
-    ICharacterDatasource datasource = MarvelCharactersDatasource(
-      publicApiKey: publicApiKey,
-      privateApiKey: privateApiKey,
-    );
-
+  void initState() {
     _kiwiContainer.registerInstance<ICharacterRepository>(
-      CharacterRepository(datasource),
+      CharacterRepository(
+        MarvelCharactersDatasource(
+          publicApiKey: kPublicApiKey,
+          privateApiKey: kPrivateApiKey,
+        ),
+      ),
     );
 
     super.initState();
@@ -37,6 +35,10 @@ class _CharacterInfoState extends State<CharacterInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return ListScreen();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Character Info",
+      home: ListScreen(),
+    );
   }
 }

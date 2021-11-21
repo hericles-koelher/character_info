@@ -4,6 +4,9 @@ import 'package:character_info/src/module/characters/infra/adapters/comic_list_a
 import 'package:fpdart/fpdart.dart';
 
 abstract class ICharacterDatasource {
+  int get charactersLimit;
+  int get characterComicsLimit;
+
   Future<Either<BaseException, ICharacterListAdapter>> getCharacters([
     int? offset,
   ]);

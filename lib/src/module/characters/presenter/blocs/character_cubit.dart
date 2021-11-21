@@ -14,26 +14,29 @@ class CharacterCubit extends Cubit<CharacterState> {
     if (state is CharacterInitial ||
         state is CharacterFetched ||
         state is CharacterFetchError) {
-      Either<BaseException, List<Character>> result =
-          await getCharactersUseCase.getList(state.characters.length);
+      Either<BaseException, List<Character>?> result =
+          await getCharactersUseCase.getList(state.oldCharacters.length);
 
-      result.fold((l) {
-        if (l is WithoutDataException && l.statusCode == 200) {
+      result.fold((exception) {
+        emit(
+          CharacterFetchError(
+            oldCharacters: state.oldCharacters,
+            exception: exception,
+          ),
+        );
+      }, (newCharacterList) {
+        if (newCharacterList != null) {
           emit(
-            CharacterEnded(state.characters),
+            CharacterFetched(
+              oldCharacters: [...state.oldCharacters, ...state.newCharacters],
+              newCharacters: newCharacterList,
+            ),
           );
         } else {
           emit(
-            CharacterFetchError(
-              characters: state.characters,
-              exception: l,
-            ),
+            CharacterEnded(oldCharacters: state.oldCharacters),
           );
         }
-      }, (r) {
-        emit(
-          CharacterFetched([...state.characters, ...r]),
-        );
       });
     }
   }

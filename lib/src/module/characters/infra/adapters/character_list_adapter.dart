@@ -1,4 +1,4 @@
-import 'package:character_info/src/module/characters/domain/models/character.dart';
+import 'package:character_info/src/module/characters/domain/domain.dart';
 
 abstract class ICharacterListAdapter {
   List<Character>? get characters;

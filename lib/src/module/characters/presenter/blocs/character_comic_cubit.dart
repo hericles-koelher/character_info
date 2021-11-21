@@ -18,31 +18,32 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
     if (state is CharacterComicInitial ||
         state is CharacterComicFetched ||
         state is CharacterComicFetchError) {
-      Either<BaseException, List<Comic>> result =
+      Either<BaseException, List<Comic>?> result =
           await getCharacterComicsUseCase.getList(
         characterId,
-        state.comics.length,
+        state.oldComics.length,
       );
 
-      result.fold((l) {
-        if (l is WithoutDataException && l.statusCode == 200) {
+      result.fold((exception) {
+        emit(
+          CharacterComicFetchError(
+            oldComics: state.oldComics,
+            exception: exception,
+          ),
+        );
+      }, (newCharacterComicList) {
+        if (newCharacterComicList != null) {
           emit(
-            CharacterComicEnded(state.comics),
+            CharacterComicFetched(
+              oldComics: [...state.oldComics, ...state.newComics],
+              newComics: newCharacterComicList,
+            ),
           );
         } else {
           emit(
-            CharacterComicFetchError(
-              comics: state.comics,
-              exception: l,
-            ),
+            CharacterComicEnded(oldComics: state.oldComics),
           );
         }
-      }, (r) {
-        emit(
-          CharacterComicFetched(
-            [...state.comics, ...r],
-          ),
-        );
       });
     }
   }

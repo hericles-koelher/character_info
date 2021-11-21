@@ -1,4 +1,4 @@
-import 'package:character_info/src/module/characters/domain/models/comic.dart';
+import 'package:character_info/src/module/characters/domain/domain.dart';
 import 'package:character_info/src/module/characters/infra/infra.dart';
 
 class MarvelComicListAdapter implements IComicListAdapter {
@@ -8,7 +8,7 @@ class MarvelComicListAdapter implements IComicListAdapter {
   MarvelComicListAdapter._([this.comics]);
 
   factory MarvelComicListAdapter.fromJson(Map<String, dynamic> json) {
-    int count = int.parse(json["count"]);
+    int count = json["count"];
 
     if (count == 0) {
       return MarvelComicListAdapter._();
@@ -18,9 +18,14 @@ class MarvelComicListAdapter implements IComicListAdapter {
         (index) {
           Map<String, dynamic> comicJsonData = json["results"][index];
 
-          String title = comicJsonData["title"];
-          String imageUrl =
-              "${comicJsonData["images"][0]["path"]}/portrait_xlarge.${comicJsonData["images"][0]["extension"]}";
+          String? title = comicJsonData.containsKey("title")
+              ? comicJsonData["title"]
+              : null;
+
+          String? imageUrl = comicJsonData.containsKey("images") &&
+                  (comicJsonData["images"] as List).isNotEmpty
+              ? "${comicJsonData["images"][0]["path"]}/portrait_xlarge.${comicJsonData["images"][0]["extension"]}"
+              : null;
 
           return Comic(
             title: title,
