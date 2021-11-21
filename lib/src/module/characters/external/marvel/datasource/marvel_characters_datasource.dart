@@ -93,10 +93,8 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
         "limit": charactersLimit,
       });
 
-      Map<String, dynamic> jsonData = response.data["data"];
-
       return Right(
-        MarvelCharacterListAdapter.fromJson(jsonData),
+        MarvelCharacterListAdapter.fromJson(response.data),
       );
     } on DioError catch (e) {
       return Left(

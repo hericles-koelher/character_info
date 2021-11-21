@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 abstract class IGetCharactersUseCase {
   int get charactersLimit;
 
-  Future<Either<BaseException, List<Character>?>> getList([
+  Future<Either<BaseException, List<Character>>> getList([
     int? offset,
   ]);
 }
@@ -18,7 +18,7 @@ class GetCharacters implements IGetCharactersUseCase {
   int get charactersLimit => repository.charactersLimit;
 
   @override
-  Future<Either<BaseException, List<Character>?>> getList([
+  Future<Either<BaseException, List<Character>>> getList([
     int? offset,
   ]) async =>
       await repository.getCharacters(offset);

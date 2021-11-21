@@ -18,7 +18,7 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
     if (state is CharacterComicInitial ||
         state is CharacterComicFetched ||
         state is CharacterComicFetchError) {
-      Either<BaseException, List<Comic>?> result =
+      Either<BaseException, List<Comic>> result =
           await getCharacterComicsUseCase.getList(
         characterId,
         state.oldComics.length,
@@ -34,7 +34,7 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
           ),
         );
       }, (newCharacterComicList) {
-        if (newCharacterComicList != null) {
+        if (newCharacterComicList.isNotEmpty) {
           emit(
             CharacterComicFetched(
               oldComics: [...state.oldComics, ...state.newComics],

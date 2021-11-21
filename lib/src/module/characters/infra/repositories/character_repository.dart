@@ -19,19 +19,9 @@ class CharacterRepository implements ICharacterRepository {
     Either<BaseException, IComicListAdapter> result =
         await datasource.getCharacterComics(id, offset);
 
-    // Caso não retorne nenhuma revista...
-    if (result.exists((r) => r.comics == null)) {
-      return Left(
-        FetchDataException(
-          statusCode: 200,
-          message: "Não há mais revistas para buscar!",
-        ),
-      );
-    }
-
     // Mapeia (se possivel) e retorna a lista de revistas,
     // ou só retorna o erro (elemento da esquerda).
-    return result.map((r) => r.comics!);
+    return result.map((r) => r.comics);
   }
 
   @override
@@ -40,18 +30,8 @@ class CharacterRepository implements ICharacterRepository {
     Either<BaseException, ICharacterListAdapter> result =
         await datasource.getCharacters(offset);
 
-    // Caso retorne nenhum personagem...
-    if (result.exists((r) => r.characters == null)) {
-      return Left(
-        FetchDataException(
-          statusCode: 200,
-          message: "Não há mais personagens para buscar!",
-        ),
-      );
-    }
-
     // Mapeia (se possivel) e retorna a lista de personagens,
     // ou só retorna o erro (elemento da esquerda).
-    return result.map((r) => r.characters!);
+    return result.map((r) => r.characters);
   }
 }

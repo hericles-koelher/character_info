@@ -3,7 +3,7 @@ import 'package:character_info/src/module/characters/external/external.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test("MarvelCharactersDatasource characters fetch", () async {
+  test("MarvelCharactersDatasource characters fetch - Success", () async {
     var dt = MarvelCharactersDatasource(
       publicApiKey: kPublicApiKey,
       privateApiKey: kPrivateApiKey,
@@ -14,7 +14,7 @@ void main() {
     expect(result.isRight(), true);
   });
 
-  test("MarvelCharactersDatasource character comics fetch", () async {
+  test("MarvelCharactersDatasource character comics fetch - Success", () async {
     var dt = MarvelCharactersDatasource(
       publicApiKey: kPublicApiKey,
       privateApiKey: kPrivateApiKey,
