@@ -21,7 +21,7 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
       Either<BaseException, List<Comic>> result =
           await getCharacterComicsUseCase.getList(
         characterId,
-        state.oldComics.length,
+        state.oldComics.length + state.newComics.length,
       );
 
       result.fold((exception) {
