@@ -15,7 +15,6 @@ class ListScreen extends StatefulWidget {
 class _ListScreenState extends State<ListScreen> {
   final CharacterCubit _characterCubit;
   final PagingController<int, Character> _pagingController;
-  bool flag = false;
 
   _ListScreenState()
       : _characterCubit = CharacterCubit(
@@ -52,14 +51,24 @@ class _ListScreenState extends State<ListScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          body: PagedGridView<int, Character>(
-            pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<Character>(
-              itemBuilder: (context, character, index) =>
-                  CharacterTile(character: character),
+          appBar: AppBar(
+            title: const Text("Character List"),
+            centerTitle: true,
+          ),
+          body: Scrollbar(
+            child: PagedGridView<int, Character>(
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Character>(
+                itemBuilder: (context, character, index) =>
+                    CharacterTile(character: character),
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              showNewPageProgressIndicatorAsGridChild: false,
+              showNewPageErrorIndicatorAsGridChild: false,
+              showNoMoreItemsIndicatorAsGridChild: false,
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2),
           ),
         );
       },

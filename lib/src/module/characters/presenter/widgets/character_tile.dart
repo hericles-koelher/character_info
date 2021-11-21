@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:character_info/src/module/characters/domain/domain.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 class CharacterTile extends StatelessWidget {
   final Character character;
@@ -19,7 +20,7 @@ class CharacterTile extends StatelessWidget {
       elevation: 1,
       clipBehavior: Clip.hardEdge,
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -29,7 +30,11 @@ class CharacterTile extends StatelessWidget {
                   imageUrl: character.imageUrl!,
                 ),
               ),
-            if (character.name != null) Text(character.name!),
+            if (character.name != null)
+              Text(
+                character.name!,
+                textAlign: TextAlign.center,
+              ),
           ],
         ),
       ),
