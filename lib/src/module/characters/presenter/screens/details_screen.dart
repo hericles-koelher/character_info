@@ -30,6 +30,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     final kiwiContainer = KiwiContainer();
 
+    // Dessa api eu espero quase tudo, exceto que o bendito ID venha nulo.
+    // Pode até vir errado que tá sossegado, agora se vier nulo deu ruim hahaha.
+    // E sim, pode vir nulo, pois na documentação da API tá marcado como
+    // opcional (assim como tudo que ela retorna).
+    // Poderia fazer um tratamento pra isso, mas vou me fingir de
+    // ingenuo e acreditar que isso não vai acontecer.
     _characterComicCubit = CharacterComicCubit(
       characterId: widget.character.id!,
       getCharacterComicsUseCase: GetCharacterComics(
