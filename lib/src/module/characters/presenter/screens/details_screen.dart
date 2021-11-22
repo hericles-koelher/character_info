@@ -1,14 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:character_info/src/module/characters/domain/domain.dart';
 import 'package:character_info/src/module/characters/presenter/blocs/character_comic_cubit.dart';
+import 'package:character_info/src/module/characters/presenter/presenter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:kiwi/kiwi.dart';
-// Não deveria fazer isso, mas infelizmente o mantenedor do pacote não
-// exportou esse arquivo.
-// Issue reportada. Link em https://github.com/vanlooverenkoen/kiwi/issues/75
-import 'package:kiwi/src/model/exception/not_registered_error.dart';
 
 class DetailsScreen extends StatefulWidget {
   final Character character;
@@ -23,7 +21,7 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
-  late final PagingController<int, Character> _pagingController;
+  late final PagingController<int, Comic> _pagingController;
   late final CharacterComicCubit _characterComicCubit;
 
   @override
@@ -32,22 +30,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     final kiwiContainer = KiwiContainer();
 
-    try {
-      _characterComicCubit =
-          kiwiContainer.resolve(widget.character.id!.toString());
-    } on NotRegisteredKiwiError {
-      _characterComicCubit = CharacterComicCubit(
-        characterId: widget.character.id!,
-        getCharacterComicsUseCase: GetCharacterComics(
-          kiwiContainer.resolve<ICharacterRepository>(),
-        ),
-      );
-
-      kiwiContainer.registerInstance(
-        _characterComicCubit,
-        name: widget.character.id.toString(),
-      );
-    }
+    _characterComicCubit = CharacterComicCubit(
+      characterId: widget.character.id!,
+      getCharacterComicsUseCase: GetCharacterComics(
+        kiwiContainer.resolve<ICharacterRepository>(),
+      ),
+    );
 
     _pagingController = PagingController(firstPageKey: 0);
 
@@ -65,48 +53,96 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Lista com informações do personagem.
+    List<Widget> infoList = [
+      if (widget.character.id != null)
+        buildInfoField(
+          label: "ID",
+          info: widget.character.id.toString(),
+          context: context,
+        ),
+      if (widget.character.name != null && widget.character.name!.isNotEmpty)
+        buildInfoField(
+          label: "Name",
+          info: widget.character.name!,
+          context: context,
+        ),
+      if (widget.character.description != null &&
+          widget.character.description!.isNotEmpty)
+        buildInfoField(
+          label: "Description",
+          info: widget.character.description!,
+          context: context,
+        ),
+      if (widget.character.numberOfComics != null)
+        buildInfoField(
+          label: "Number of Comics",
+          info: widget.character.numberOfComics.toString(),
+          context: context,
+        )
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Character Details"),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          vertical: 25,
-          horizontal: 15,
-        ),
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+      body: Scrollbar(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(
+            vertical: 25,
+            horizontal: 15,
+          ),
+          physics: const BouncingScrollPhysics(),
           children: [
-            if (widget.character.imageUrl != null &&
-                widget.character.imageUrl!.isNotEmpty)
-              CachedNetworkImage(imageUrl: widget.character.imageUrl!),
+            if (widget.character.landscapeImageUrl != null &&
+                widget.character.landscapeImageUrl!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Center(
+                  child: CachedNetworkImage(
+                    imageUrl: widget.character.landscapeImageUrl!,
+                  ),
+                ),
+              ),
+            // Fiz isso pra poder colocar os Divider's somente onde for necessário
+            ...infoList.expand((info) {
+              if (infoList.last != info) {
+                return [
+                  info,
+                  const Divider(),
+                ];
+              } else {
+                return [info];
+              }
+            }),
             if (widget.character.id != null)
-              infoField(
-                label: "ID",
-                info: widget.character.id.toString(),
-                context: context,
-              ),
-            if (widget.character.name != null &&
-                widget.character.name!.isNotEmpty)
-              infoField(
-                label: "Name",
-                info: widget.character.name!,
-                context: context,
-              ),
-            if (widget.character.description != null &&
-                widget.character.description!.isNotEmpty)
-              infoField(
-                label: "Description",
-                info: widget.character.description!,
-                context: context,
-              ),
-            if (widget.character.numberOfComics != null)
-              infoField(
-                label: "Number of Comics",
-                info: widget.character.numberOfComics.toString(),
-                context: context,
+              // Pra resolver problema de 'unbounded height"...
+              SizedBox(
+                height: 250,
+                child: BlocConsumer<CharacterComicCubit, CharacterComicState>(
+                  bloc: _characterComicCubit,
+                  listener: (context, state) {
+                    if (state is! CharacterComicEnded) {
+                      _updatePagingController();
+                    }
+                  },
+                  builder: (context, state) {
+                    return Scrollbar(
+                      child: PagedListView<int, Comic>(
+                        pagingController: _pagingController,
+                        scrollDirection: Axis.horizontal,
+                        builderDelegate: PagedChildBuilderDelegate<Comic>(
+                          itemBuilder: (context, comic, index) => ComicTile(
+                            comic: comic,
+                            width: 200,
+                            height: 250,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
           ],
         ),
@@ -114,7 +150,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  Widget infoField({
+  Widget buildInfoField({
     required String label,
     required String info,
     required BuildContext context,
@@ -122,14 +158,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label + ":",
-            style: textTheme.subtitle2,
+            style: textTheme.subtitle1?.copyWith(fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
           ),
           Text(
@@ -140,5 +176,26 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _updatePagingController() async {
+    try {
+      final oldComics = _characterComicCubit.state.oldComics;
+      final newComics = _characterComicCubit.state.newComics;
+
+      final isLastPage =
+          newComics.length < _characterComicCubit.state.characterComicsLimit;
+
+      if (isLastPage) {
+        _pagingController.appendLastPage(newComics);
+      } else {
+        _pagingController.appendPage(
+          newComics,
+          oldComics.length + newComics.length,
+        );
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 }

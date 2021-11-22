@@ -1,5 +1,6 @@
 import 'package:character_info/src/module/characters/domain/domain.dart';
 import 'package:character_info/src/module/characters/presenter/presenter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -42,22 +43,23 @@ class _ListScreenState extends State<ListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CharacterCubit, CharacterState>(
-      bloc: _characterCubit,
-      listener: (context, state) {
-        if (state is! CharacterEnded) {
-          _updatePagingController();
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Character List"),
-            centerTitle: true,
-          ),
-          body: Scrollbar(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Character List"),
+        centerTitle: true,
+      ),
+      body: BlocConsumer<CharacterCubit, CharacterState>(
+        bloc: _characterCubit,
+        listener: (context, state) {
+          if (state is! CharacterEnded) {
+            _updatePagingController();
+          }
+        },
+        builder: (context, state) {
+          return Scrollbar(
             child: PagedGridView<int, Character>(
               pagingController: _pagingController,
+              physics: const BouncingScrollPhysics(),
               builderDelegate: PagedChildBuilderDelegate<Character>(
                 itemBuilder: (context, character, index) => CharacterTile(
                   character: character,
@@ -79,9 +81,9 @@ class _ListScreenState extends State<ListScreen> {
               showNewPageErrorIndicatorAsGridChild: false,
               showNoMoreItemsIndicatorAsGridChild: false,
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

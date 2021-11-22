@@ -38,7 +38,13 @@ class _CharacterInfoState extends State<CharacterInfo> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Character Info",
-      home: ListScreen(),
+      theme: ThemeData(
+        primaryColor: Colors.deepPurple,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.deepPurple,
+        ),
+      ),
+      home: const ListScreen(),
     );
   }
 }
