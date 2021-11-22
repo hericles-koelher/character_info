@@ -29,8 +29,8 @@
 <p align="center">
  <a href="#sobre">Sobre</a> •
  <a href="#aplicativo">Aplicativo</a> •
- <a href="#author">Autor</a> • 
- <a href="#user-content-license">Licença</a>
+ <a href="#autor">Autor</a> • 
+ <a href="#licença">Licença</a>
 
 </p>
 
@@ -42,7 +42,7 @@ Character Info - Aplicativo Flutter desenvolvido como parte do desafio da Gyzu.
 
 ---
 
-## Applicativo
+## Aplicativo
 
 Abaixo é possivel ver uma pequena demosntração do app.
 
