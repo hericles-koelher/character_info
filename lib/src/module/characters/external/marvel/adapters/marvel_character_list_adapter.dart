@@ -15,31 +15,33 @@ class MarvelCharacterListAdapter implements ICharacterListAdapter {
       (index) {
         Map<String, dynamic> characterJsonData = json["data"]["results"][index];
 
-        int? id = characterJsonData.containsKey("id")
-            ? characterJsonData["id"]
-            : null;
+        int id =
+            characterJsonData.containsKey("id") ? characterJsonData["id"] : 0;
 
-        String? name = characterJsonData.containsKey("name")
+        String name = characterJsonData.containsKey("name")
             ? characterJsonData["name"]
-            : null;
+            : "";
 
-        String? description = characterJsonData.containsKey("description")
+        String description = characterJsonData.containsKey("description")
             ? characterJsonData["description"]
-            : null;
+            : "";
 
-        String? portraitImageUrl;
-        String? landscapeImageUrl;
+        String portraitImageUrl;
+        String landscapeImageUrl;
 
         if (characterJsonData.containsKey("thumbnail")) {
           portraitImageUrl =
               "${characterJsonData["thumbnail"]["path"]}/portrait_fantastic.${characterJsonData["thumbnail"]["extension"]}";
           landscapeImageUrl =
               "${characterJsonData["thumbnail"]["path"]}/landscape_amazing.${characterJsonData["thumbnail"]["extension"]}";
+        } else {
+          portraitImageUrl = "";
+          landscapeImageUrl = "";
         }
 
-        int? numberOfComics = characterJsonData.containsKey("comics")
+        int numberOfComics = characterJsonData.containsKey("comics")
             ? characterJsonData["comics"]["available"]
-            : null;
+            : 0;
 
         return Character(
           id: id,

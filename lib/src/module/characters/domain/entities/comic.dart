@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 
 class Comic extends Equatable {
-  final String? title;
-  final String? imageUrl;
+  final String title;
+  final String imageUrl;
 
   const Comic({
-    this.title,
-    this.imageUrl,
+    required this.title,
+    required this.imageUrl,
   });
 
   @override

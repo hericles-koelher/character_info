@@ -30,14 +30,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     final kiwiContainer = KiwiContainer();
 
-    // Dessa api eu espero quase tudo, exceto que o bendito ID venha nulo.
-    // Pode até vir errado que tá sossegado, agora se vier nulo deu ruim hahaha.
-    // E sim, pode vir nulo, pois na documentação da API tá marcado como
-    // opcional (assim como tudo que ela retorna).
-    // Poderia fazer um tratamento pra isso, mas vou me fingir de
-    // ingenuo e acreditar que isso não vai acontecer.
     _characterComicCubit = CharacterComicCubit(
-      characterId: widget.character.id!,
+      characterId: widget.character.id,
       getCharacterComicsUseCase: GetCharacterComics(
         kiwiContainer.resolve<ICharacterRepository>(),
       ),
@@ -59,35 +53,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Lista com informações do personagem.
-    List<Widget> infoList = [
-      if (widget.character.id != null)
-        buildInfoField(
-          label: "ID",
-          info: widget.character.id.toString(),
-          context: context,
-        ),
-      if (widget.character.name != null && widget.character.name!.isNotEmpty)
-        buildInfoField(
-          label: "Name",
-          info: widget.character.name!,
-          context: context,
-        ),
-      if (widget.character.description != null &&
-          widget.character.description!.isNotEmpty)
-        buildInfoField(
-          label: "Description",
-          info: widget.character.description!,
-          context: context,
-        ),
-      if (widget.character.numberOfComics != null)
-        buildInfoField(
-          label: "Number of Comics",
-          info: widget.character.numberOfComics.toString(),
-          context: context,
-        )
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Character Details"),
@@ -105,71 +70,82 @@ class _DetailsScreenState extends State<DetailsScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Center(
                 child: CachedNetworkImage(
-                  // Se por acaso a url da imagem for null ou já for string vazia
-                  // só vai dar erro e outro widget será exibido
-                  imageUrl: widget.character.landscapeImageUrl ?? "",
+                  imageUrl: widget.character.landscapeImageUrl,
                   errorWidget: (_, __, ___) => const Image(
                     image: AssetImage("assets/images/image_error.jpg"),
                   ),
                 ),
               ),
             ),
-            // Fiz isso pra poder colocar os Divider's somente onde for necessário
-            ...infoList.expand((info) {
-              if (infoList.last != info) {
-                return [
-                  info,
-                  const Divider(),
-                ];
-              } else {
-                return [info];
-              }
-            }),
-            if (widget.character.id != null)
-              // Pra resolver problema de 'unbounded height"...
-              SizedBox(
-                height: 250,
-                child: BlocConsumer<CharacterComicCubit, CharacterComicState>(
-                  bloc: _characterComicCubit,
-                  listener: (context, state) {
-                    if (state is! CharacterComicEnded) {
-                      _updatePagingController();
-                    }
-                  },
-                  builder: (context, state) {
-                    return Scrollbar(
-                      child: PagedListView<int, Comic>(
-                        pagingController: _pagingController,
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        builderDelegate: PagedChildBuilderDelegate<Comic>(
-                          itemBuilder: (context, comic, index) => ComicTile(
-                            comic: comic,
-                            width: 200,
-                            height: 250,
-                          ),
-                          firstPageErrorIndicatorBuilder: (context) =>
-                              ErrorTile(
-                            label: "Comics not found!\nTap to try again.",
-                            icon: const Icon(Icons.refresh),
-                            onTap: () {
-                              _characterComicCubit.fetchComics();
-                            },
-                          ),
-                          newPageErrorIndicatorBuilder: (context) => ErrorTile(
-                            label:
-                                "Cannot find more comics!\nTap to try again.",
-                            icon: const Icon(Icons.refresh),
-                            onTap: () {
-                              _characterComicCubit.fetchComics();
-                            },
-                          ),
+            buildInfoField(
+              label: "ID",
+              info: widget.character.id.toString(),
+              context: context,
+            ),
+            const Divider(),
+            if (widget.character.name.isNotEmpty) ...[
+              buildInfoField(
+                label: "Name",
+                info: widget.character.name,
+                context: context,
+              ),
+              const Divider(),
+            ],
+            if (widget.character.description.isNotEmpty) ...[
+              buildInfoField(
+                label: "Description",
+                info: widget.character.description,
+                context: context,
+              ),
+              const Divider(),
+            ],
+            buildInfoField(
+              label: "Number of Comics",
+              info: widget.character.numberOfComics.toString(),
+              context: context,
+            ),
+            // Pra resolver problema de 'unbounded height"...
+            SizedBox(
+              height: 250,
+              child: BlocConsumer<CharacterComicCubit, CharacterComicState>(
+                bloc: _characterComicCubit,
+                listener: (context, state) {
+                  if (state is! CharacterComicEnded) {
+                    _updatePagingController();
+                  }
+                },
+                builder: (context, state) {
+                  return Scrollbar(
+                    child: PagedListView<int, Comic>(
+                      pagingController: _pagingController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      builderDelegate: PagedChildBuilderDelegate<Comic>(
+                        itemBuilder: (context, comic, index) => ComicTile(
+                          comic: comic,
+                          width: 200,
+                          height: 250,
+                        ),
+                        firstPageErrorIndicatorBuilder: (context) => ErrorTile(
+                          label: "Comics not found!\nTap to try again.",
+                          icon: const Icon(Icons.refresh),
+                          onTap: () {
+                            _characterComicCubit.fetchComics();
+                          },
+                        ),
+                        newPageErrorIndicatorBuilder: (context) => ErrorTile(
+                          label: "Cannot find more comics!\nTap to try again.",
+                          icon: const Icon(Icons.refresh),
+                          onTap: () {
+                            _characterComicCubit.fetchComics();
+                          },
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
+            ),
           ],
         ),
       ),

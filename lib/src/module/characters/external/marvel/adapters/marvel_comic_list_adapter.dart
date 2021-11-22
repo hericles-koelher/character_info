@@ -15,13 +15,13 @@ class MarvelComicListAdapter implements IComicListAdapter {
       (index) {
         Map<String, dynamic> comicJsonData = json["data"]["results"][index];
 
-        String? title =
-            comicJsonData.containsKey("title") ? comicJsonData["title"] : null;
+        String title =
+            comicJsonData.containsKey("title") ? comicJsonData["title"] : "";
 
-        String? imageUrl = comicJsonData.containsKey("images") &&
+        String imageUrl = comicJsonData.containsKey("images") &&
                 (comicJsonData["images"] as List).isNotEmpty
             ? "${comicJsonData["images"][0]["path"]}/portrait_fantastic.${comicJsonData["images"][0]["extension"]}"
-            : null;
+            : "";
 
         return Comic(
           title: title,

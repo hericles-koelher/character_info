@@ -31,26 +31,19 @@ class ComicTile extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (comic.imageUrl != null)
-                  Expanded(
-                    child: CachedNetworkImage(
-                      imageUrl: comic.imageUrl!,
-                      errorWidget: (_, __, ___) => const Image(
-                        image: AssetImage("assets/images/image_error.jpg"),
-                      ),
-                    ),
-                  )
-                else
-                  const Expanded(
-                    child: Image(
+                Expanded(
+                  child: CachedNetworkImage(
+                    imageUrl: comic.imageUrl,
+                    errorWidget: (_, __, ___) => const Image(
                       image: AssetImage("assets/images/image_error.jpg"),
                     ),
                   ),
+                ),
                 const SizedBox(
                   height: 5,
                 ),
                 Text(
-                  comic.title ?? "Title not found",
+                  comic.title,
                   textAlign: TextAlign.center,
                 ),
               ],

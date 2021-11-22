@@ -26,23 +26,16 @@ class CharacterTile extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (character.portraitImageUrl != null)
-                Expanded(
-                  child: CachedNetworkImage(
-                    imageUrl: character.portraitImageUrl!,
-                    errorWidget: (_, __, ___) => const Image(
-                      image: AssetImage("assets/images/image_error.jpg"),
-                    ),
-                  ),
-                )
-              else
-                const Expanded(
-                  child: Image(
+              Expanded(
+                child: CachedNetworkImage(
+                  imageUrl: character.portraitImageUrl,
+                  errorWidget: (_, __, ___) => const Image(
                     image: AssetImage("assets/images/image_error.jpg"),
                   ),
                 ),
+              ),
               Text(
-                character.name ?? "Name not found",
+                character.name,
                 textAlign: TextAlign.center,
               ),
             ],
