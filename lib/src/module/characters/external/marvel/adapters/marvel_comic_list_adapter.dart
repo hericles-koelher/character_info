@@ -20,7 +20,7 @@ class MarvelComicListAdapter implements IComicListAdapter {
 
         String? imageUrl = comicJsonData.containsKey("images") &&
                 (comicJsonData["images"] as List).isNotEmpty
-            ? "${comicJsonData["images"][0]["path"]}/portrait_xlarge.${comicJsonData["images"][0]["extension"]}"
+            ? "${comicJsonData["images"][0]["path"]}/portrait_fantastic.${comicJsonData["images"][0]["extension"]}"
             : null;
 
         return Comic(
