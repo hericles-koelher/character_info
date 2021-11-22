@@ -18,14 +18,14 @@ class ComicTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: Card(
-          elevation: 1,
-          clipBehavior: Clip.hardEdge,
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Card(
+        elevation: 2,
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(

@@ -18,9 +18,10 @@ class ErrorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: onTap,
-      child: Card(
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: onTap,
         child: Padding(
           padding: padding ?? const EdgeInsets.all(10),
           child: Column(
