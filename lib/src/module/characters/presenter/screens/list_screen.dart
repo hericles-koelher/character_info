@@ -76,6 +76,8 @@ class _ListScreenState extends State<ListScreen> {
                 firstPageErrorIndicatorBuilder: (context) => ErrorTile(
                   label: "Characters not found!\nTap to try again.",
                   icon: const Icon(Icons.refresh),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 40, horizontal: 15),
                   onTap: () {
                     _characterCubit.fetchCharacters();
                   },
@@ -83,6 +85,8 @@ class _ListScreenState extends State<ListScreen> {
                 newPageErrorIndicatorBuilder: (context) => ErrorTile(
                   label: "Cannot find more characters!\nTap to try again.",
                   icon: const Icon(Icons.refresh),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 40, horizontal: 15),
                   onTap: () {
                     _characterCubit.fetchCharacters();
                   },

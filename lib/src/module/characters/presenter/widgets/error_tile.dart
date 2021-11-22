@@ -4,12 +4,14 @@ class ErrorTile extends StatelessWidget {
   final String label;
   final Widget? icon;
   final void Function()? onTap;
+  final EdgeInsetsGeometry? padding;
 
   const ErrorTile({
     Key? key,
     required this.label,
     this.icon,
     this.onTap,
+    this.padding,
   }) : super(key: key);
 
   @override
@@ -20,7 +22,7 @@ class ErrorTile extends StatelessWidget {
       onTap: onTap,
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+          padding: padding ?? const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -29,7 +31,10 @@ class ErrorTile extends StatelessWidget {
                 style: textTheme.subtitle1,
                 textAlign: TextAlign.center,
               ),
-              if (icon != null) icon!,
+              if (icon != null) ...[
+                const SizedBox(height: 10),
+                icon!,
+              ],
             ],
           ),
         ),
