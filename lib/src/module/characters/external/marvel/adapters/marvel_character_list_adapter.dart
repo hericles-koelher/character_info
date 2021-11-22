@@ -27,9 +27,15 @@ class MarvelCharacterListAdapter implements ICharacterListAdapter {
             ? characterJsonData["description"]
             : null;
 
-        String? imageUrl = characterJsonData.containsKey("thumbnail")
-            ? "${characterJsonData["thumbnail"]["path"]}/portrait_xlarge.${characterJsonData["thumbnail"]["extension"]}"
-            : null;
+        String? portraitImageUrl;
+        String? landscapeImageUrl;
+
+        if (characterJsonData.containsKey("thumbnail")) {
+          portraitImageUrl =
+              "${characterJsonData["thumbnail"]["path"]}/portrait_fantastic.${characterJsonData["thumbnail"]["extension"]}";
+          landscapeImageUrl =
+              "${characterJsonData["thumbnail"]["path"]}/landscape_amazing.${characterJsonData["thumbnail"]["extension"]}";
+        }
 
         int? numberOfComics = characterJsonData.containsKey("comics")
             ? characterJsonData["comics"]["available"]
@@ -39,7 +45,8 @@ class MarvelCharacterListAdapter implements ICharacterListAdapter {
           id: id,
           name: name,
           description: description,
-          imageUrl: imageUrl,
+          portraitImageUrl: portraitImageUrl,
+          landscapeImageUrl: landscapeImageUrl,
           numberOfComics: numberOfComics,
         );
       },

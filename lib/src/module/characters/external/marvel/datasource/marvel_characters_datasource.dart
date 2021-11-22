@@ -8,7 +8,6 @@ import 'package:fpdart/fpdart.dart';
 
 class MarvelCharactersDatasource implements ICharacterDatasource {
   static const Utf8Encoder _utf8encoder = Utf8Encoder();
-  static const String imgSize = "portrait_xlarge";
   static final Dio _dio = Dio();
 
   final int _charactersLimit;
@@ -57,10 +56,8 @@ class MarvelCharactersDatasource implements ICharacterDatasource {
         "limit": characterComicsLimit,
       });
 
-      Map<String, dynamic> jsonData = response.data["data"];
-
       return Right(
-        MarvelComicListAdapter.fromJson(jsonData),
+        MarvelComicListAdapter.fromJson(response.data),
       );
     } on DioError catch (e) {
       return Left(

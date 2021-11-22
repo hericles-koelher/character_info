@@ -5,14 +5,16 @@ class Character extends Equatable {
   final int? numberOfComics;
   final String? name;
   final String? description;
-  final String? imageUrl;
+  final String? portraitImageUrl;
+  final String? landscapeImageUrl;
 
   const Character({
     this.id,
+    this.numberOfComics,
     this.name,
     this.description,
-    this.imageUrl,
-    this.numberOfComics,
+    this.portraitImageUrl,
+    this.landscapeImageUrl,
   });
 
   @override
@@ -20,7 +22,7 @@ class Character extends Equatable {
         id,
         name,
         description,
-        imageUrl,
+        portraitImageUrl,
         numberOfComics,
       ];
 }
