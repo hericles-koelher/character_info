@@ -20,7 +20,7 @@ class CharacterCubit extends Cubit<CharacterState> {
       result.fold((exception) {
         emit(
           CharacterFetchError(
-            oldCharacters: state.oldCharacters,
+            oldCharacters: state.oldCharacters + state.newCharacters,
             charactersLimit: getCharactersUseCase.charactersLimit,
             exception: exception,
           ),

@@ -27,7 +27,7 @@ class CharacterComicCubit extends Cubit<CharacterComicState> {
       result.fold((exception) {
         emit(
           CharacterComicFetchError(
-            oldComics: state.oldComics,
+            oldComics: state.oldComics + state.newComics,
             exception: exception,
             characterComicsLimit:
                 getCharacterComicsUseCase.characterComicsLimit,

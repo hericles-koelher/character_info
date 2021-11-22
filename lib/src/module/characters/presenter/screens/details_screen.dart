@@ -95,16 +95,19 @@ class _DetailsScreenState extends State<DetailsScreen> {
           ),
           physics: const BouncingScrollPhysics(),
           children: [
-            if (widget.character.landscapeImageUrl != null &&
-                widget.character.landscapeImageUrl!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Center(
-                  child: CachedNetworkImage(
-                    imageUrl: widget.character.landscapeImageUrl!,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Center(
+                child: CachedNetworkImage(
+                  // Se por acaso a url da imagem for null ou já for string vazia
+                  // só vai dar erro e outro widget será exibido
+                  imageUrl: widget.character.landscapeImageUrl ?? "",
+                  errorWidget: (_, __, ___) => const Image(
+                    image: AssetImage("assets/images/image_error.jpg"),
                   ),
                 ),
               ),
+            ),
             // Fiz isso pra poder colocar os Divider's somente onde for necessário
             ...infoList.expand((info) {
               if (infoList.last != info) {
@@ -137,6 +140,22 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             comic: comic,
                             width: 200,
                             height: 250,
+                          ),
+                          firstPageErrorIndicatorBuilder: (context) =>
+                              ErrorTile(
+                            label: "Comics not found!\nTap to try again.",
+                            icon: const Icon(Icons.refresh),
+                            onTap: () {
+                              _characterComicCubit.fetchComics();
+                            },
+                          ),
+                          newPageErrorIndicatorBuilder: (context) => ErrorTile(
+                            label:
+                                "Cannot find more comics!\nTap to try again.",
+                            icon: const Icon(Icons.refresh),
+                            onTap: () {
+                              _characterComicCubit.fetchComics();
+                            },
                           ),
                         ),
                       ),
@@ -180,19 +199,25 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   Future<void> _updatePagingController() async {
     try {
-      final oldComics = _characterComicCubit.state.oldComics;
-      final newComics = _characterComicCubit.state.newComics;
-
-      final isLastPage =
-          newComics.length < _characterComicCubit.state.characterComicsLimit;
-
-      if (isLastPage) {
-        _pagingController.appendLastPage(newComics);
+      if (_characterComicCubit.state is CharacterComicFetchError) {
+        // Só pra que o package saiba que existe um erro,
+        // já que ele nao repassa esse valor a uma função de build.
+        _pagingController.error = true;
       } else {
-        _pagingController.appendPage(
-          newComics,
-          oldComics.length + newComics.length,
-        );
+        final oldComics = _characterComicCubit.state.oldComics;
+        final newComics = _characterComicCubit.state.newComics;
+
+        final isLastPage =
+            newComics.length < _characterComicCubit.state.characterComicsLimit;
+
+        if (isLastPage) {
+          _pagingController.appendLastPage(newComics);
+        } else {
+          _pagingController.appendPage(
+            newComics,
+            oldComics.length + newComics.length,
+          );
+        }
       }
     } catch (error) {
       _pagingController.error = error;

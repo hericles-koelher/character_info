@@ -73,6 +73,20 @@ class _ListScreenState extends State<ListScreen> {
                     );
                   },
                 ),
+                firstPageErrorIndicatorBuilder: (context) => ErrorTile(
+                  label: "Characters not found!\nTap to try again.",
+                  icon: const Icon(Icons.refresh),
+                  onTap: () {
+                    _characterCubit.fetchCharacters();
+                  },
+                ),
+                newPageErrorIndicatorBuilder: (context) => ErrorTile(
+                  label: "Cannot find more characters!\nTap to try again.",
+                  icon: const Icon(Icons.refresh),
+                  onTap: () {
+                    _characterCubit.fetchCharacters();
+                  },
+                ),
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -89,19 +103,25 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _updatePagingController() async {
     try {
-      final oldCharacters = _characterCubit.state.oldCharacters;
-      final newCharacters = _characterCubit.state.newCharacters;
-
-      final isLastPage =
-          newCharacters.length < _characterCubit.state.charactersLimit;
-
-      if (isLastPage) {
-        _pagingController.appendLastPage(newCharacters);
+      if (_characterCubit.state is CharacterFetchError) {
+        // Só pra que o package saiba que existe um erro,
+        // já que ele nao repassa esse valor a uma função de build.
+        _pagingController.error = true;
       } else {
-        _pagingController.appendPage(
-          newCharacters,
-          oldCharacters.length + newCharacters.length,
-        );
+        final oldCharacters = _characterCubit.state.oldCharacters;
+        final newCharacters = _characterCubit.state.newCharacters;
+
+        final isLastPage =
+            newCharacters.length < _characterCubit.state.charactersLimit;
+
+        if (isLastPage) {
+          _pagingController.appendLastPage(newCharacters);
+        } else {
+          _pagingController.appendPage(
+            newCharacters,
+            oldCharacters.length + newCharacters.length,
+          );
+        }
       }
     } catch (error) {
       _pagingController.error = error;
