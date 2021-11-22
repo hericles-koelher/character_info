@@ -135,6 +135,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       child: PagedListView<int, Comic>(
                         pagingController: _pagingController,
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         builderDelegate: PagedChildBuilderDelegate<Comic>(
                           itemBuilder: (context, comic, index) => ComicTile(
                             comic: comic,
