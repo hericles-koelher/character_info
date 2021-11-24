@@ -48,6 +48,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
   void dispose() {
     _pagingController.dispose();
 
+    _characterComicCubit.close();
+
     super.dispose();
   }
 

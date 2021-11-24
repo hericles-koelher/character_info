@@ -38,6 +38,8 @@ class _ListScreenState extends State<ListScreen> {
   void dispose() {
     _pagingController.dispose();
 
+    _characterCubit.close();
+
     super.dispose();
   }
 
